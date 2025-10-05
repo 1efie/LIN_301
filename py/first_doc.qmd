@@ -1,0 +1,205 @@
+---
+title: "My First Quarto Document"
+author: "Your Name Here"
+date: "2025-09-29"
+format: html
+---
+
+# Introduction
+
+This is my very first Quarto document!\
+It will generate a PDF when I render it.
+
+```{python}
+print("Hello world!")
+```
+
+# Python Example
+
+Here’s a Python code block that prints `"Hello World!"`:
+
+```{python}
+hello_world = "Hello world!"
+print(hello_world)
+```
+
+```{python}
+my_age = 21
+current_year = 2025
+year_of_birth = current_year - my_age
+my_age = 50
+print (my_age)
+```
+
+```{python}
+my_age = 21
+current_year = 2025
+year_of_birth = current_year - my_age
+print(year_of_birth)
+
+to_kid = 30 - my-age
+my_age + to-kid + 18
+```
+
+```{python}
+num_1 = 1
+type(num_1)
+num_2 = 1.5
+type(num_2)
+```
+
+```{python}
+100 + 37
+4 * 80
+100 / 25
+2 ** 2 
+2 ** 2 == 2 * 2
+10 % 3
+n = 17
+
+if n % 2 == 0:
+    print("even")
+else:
+    print("odd")
+    
+10 // 3   # 3  (3 goes into 10 three times, remainder dropped)
+14 // 5   # 2  (5 goes into 14 two times, remainder dropped)
+
+14 / 5      # 2.8 (normal division)
+14 % 5      # 4   (modulus)
+14 // 5     # 2   (floor division)
+```
+
+```{python}
+100 / 9
+100 % 9
+100 // 9
+
+365 // 7
+365 % 7
+```
+
+```{python}
+title = "Dr."
+first_name = "Andrew"
+last_name = "Byrd"
+title + first_name + last_name
+print(title, first_name, last_name)
+```
+
+```{python}
+print("I said, \"Hello!\"")
+```
+
+```{python}
+first_name
+first_name == "Bob"
+# exactly equal to
+
+first_name != "Bob"
+# not equal to
+```
+
+```{python}
+word = 'pin'
+starts_p = word[0] == 'p'
+starts_t = word[0] == 't'
+starts_k = word[0] == 'k'
+aspirated = starts_p or starts_t or starts_k
+print(word: 'is aspirated', aspirated)
+```
+
+```{python}
+novels = ["Sense and Sensibility", "Pride and Prejudice", "Mansfield Park", "Emma", "Northanger Abbey", "Persuasion", "Lady Susan"]
+print(novels)
+
+unfinished = ["The Watsons", "Sanditon"]
+novels + unfinished
+
+novels[6]
+
+novels.index("Lady Susan")
+
+pub_year = [1811, 1813, 1814, 1815, 1818, 1818, 1871]
+susan_index = novels.index("Lady Susan")
+pub_year[susan_index]  # 1871
+
+year_index = pub_year.index(1814)
+novels[year_index]
+# 'Mansfield Park'
+
+novels[-1]
+# 'Lady Susan'
+```
+
+```{python}
+orwell_novels = ["Animal Farm", "Nineteen Eighty-Four", "Burmese Days", "Keep the Aspidistra Flying", "Coming Up for Air"]
+pub_year = [1945, 1949, 1934, 1936, 1939]
+
+orwell_novels[0]
+orwell_novels[-1]
+
+pub_year[orwell_novels.index("Burmese Days")]
+
+orwell_novels[pub_year.index(1936)]
+```
+
+```{python}
+novels[0:3]
+# ['Sense and Sensibility', 'Pride and Prejudice', 'Mansfield Park']
+
+"Emma" in novels          # True
+"Frankenstein" in novels  # False
+
+novel_to_check = "Lady Susan"
+novel_to_check in novels
+```
+
+```{python}
+complex_list = [["Sense and Sensibility", 1811],
+                ["Pride and Prejudice", 1813],
+                ["Mansfield Park", 1814],
+                ["Emma", 1815]]
+complex_list[0]      # ["Sense and Sensibility", 1811]
+complex_list[2][1]   # 1814
+```
+
+```{python}
+novel_dict = {"Sense and Sensibility": 1811,
+              "Pride and Prejudice": 1813,
+              "Mansfield Park": 1814}
+              
+austen_dict = {
+    "Sense and Sensibility": 1811,
+    "Pride and Prejudice": 1813,
+    "Mansfield Park": 1814,
+    "Emma": 1815,
+    "Northanger Abbey": 1818,   # duplicate value
+    "Persuasion": 1818,         # duplicate value
+    "Lady Susan": 1871
+}
+
+austen_dict["Pride and Prejudice"]
+# 1813
+
+austen_dict["The Rise of Han Solo"] = 2025
+
+austen_dict["The Rise of Han Solo"] = 1872
+
+del austen_dict["The Rise of Han Solo"]
+
+"Pride and Prejudice" in austen_dict  # True
+1811 in austen_dict                   # False
+```
+
+```{python}
+orwell_dict = {
+    "Animal Farm": 1945,
+    "Nineteen Eighty-Four": 1949,
+    "Burmese Days": 1934,
+    "Keep the Aspidistra Flying": 1936,
+    "Coming Up for Air": 1939
+}
+
+
+```

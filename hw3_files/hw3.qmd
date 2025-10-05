@@ -1,0 +1,61 @@
+---
+title: "hw3"
+format: html
+---
+
+Loading the file:
+
+```{python}
+with open("./shakespeare.txt", "r", encoding="utf-8") as f:
+    text = f.read()
+```
+
+Making a list:
+
+```{python}
+text.split()[:1000]
+first_words = text.split()[:1000]
+```
+
+```{python}
+first_words[499]
+```
+
+Narrowing down the list:
+
+```{python}
+chosen_ones = ['thee', 'she', 'beguile', 'now', 'that', 'flowers', 'bounteous', 'if', 'do', 'all-eating']
+```
+
+Making a dictionary:
+
+```{python}
+text.split()
+bill = text.split()
+```
+
+```{python}
+bill.count('thee')
+bill.count('she')
+bill.count('beguile')
+bill.count('now')
+bill.count('that')
+bill.count('flowers')
+bill.count('bounteous')
+bill.count('if')
+bill.count('do')
+bill.count('all-eating')
+```
+
+```{python}
+word_counts = {word: bill.count(word) for word in chosen_ones}
+print (word_counts)
+```
+
+Reflection:
+
+-   The easiest part of this assignment was creating all the variables since that feels very straightforward for me.
+
+-   The hardest part of this assignment was the dictionary section just because I feel like we didn't spend a lot of time going over it in class, so I had to go back and reference the slides many times.
+
+-   A linguist might use lists and dictionaries to analyze text, for instance, to count how many times a particular word is used by a speaker or character.
