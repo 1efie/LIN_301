@@ -1,0 +1,35 @@
+---
+title: "gut_detective"
+format: html
+---
+
+```{python}
+with open("/Users/lefie/301/gut_detective/romeo.txt", "r", encoding="utf-8") as f:
+    romeo = f.read()
+```
+
+```{python}
+with open("/Users/lefie/301/gut_detective/dracula.txt", "r", encoding="utf-8") as f:
+    drac = f.read()
+```
+
+```{python}
+import re
+
+words_r = re.split(r"[\s\W]+", romeo.lower().strip()) 
+words_r = [w for w in words_r if w] 
+```
+
+```{python}
+import re
+
+words_d = re.split(r"[\s\W]+", drac.lower().strip()) 
+words_d = [w for w in words_d if w] 
+```
+
+```{python}
+len(words_d)
+len(words_r)
+
+
+```
