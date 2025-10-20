@@ -18,6 +18,8 @@ import re
 
 words_r = re.split(r"[\s\W]+", romeo.lower().strip()) 
 words_r = [w for w in words_r if w] 
+
+print(words_r[:15])
 ```
 
 ```{python}
@@ -25,11 +27,51 @@ import re
 
 words_d = re.split(r"[\s\W]+", drac.lower().strip()) 
 words_d = [w for w in words_d if w] 
+
+print(words_d[:15])
 ```
 
 ```{python}
-len(words_d)
-len(words_r)
+totalwords_d = len(words_d)
+totalwords_r = len(words_r)
 
+print("Total words in Dracula:", totalwords_d)
+print("Total words in Romeo and Juliet:", totalwords_r)
 
+uniquewords_d = len(set(words_d))
+uniquewords_r = len(set(words_r))
+
+print("Total unique words in Dracula:", uniquewords_d)
+print("Total unique words in Romeo and Juliet:", uniquewords_r)
+```
+
+```{python}
+avg_len_d = sum(len(w) for w in words_d) / len(words_d)
+print("Average word length in Dracula:", avg_len_d)
+
+avg_len_r = sum(len(w) for w in words_r) / len(words_r)
+print("Average word length in Romeo and Juliet:", avg_len_r)
+```
+
+```{python}
+adverbs_d = [w for w in words_d if w.lower().endswith("ly")]
+print("Adverbs in Dracula:", len(adverbs_d))
+
+adverbs_r = [w for w in words_r if w.lower().endswith("ly")]
+print("Adverbs in Romeo and Juliet:", len(adverbs_r))
+```
+
+```{python}
+quot_list = ['"', '“', '”']
+
+in_dialogue = False
+dialogue_words_d = []
+
+for word in drac:
+      if any(q in word for q in quot_list):
+            in_dialogue = not in_dialogue
+      if in_dialogue:
+            dialogue_words_d.append(word)
+            
+print("Dialogue word count in Dracula:", len(dialogue_words_d))
 ```

@@ -523,3 +523,295 @@ with open("alice.txt", "r", encoding="utf-8") as f:
     
 print(alice_text[:100])
 ```
+
+```{python}
+word = "computation"
+vowels = "aeiou"
+
+for c in word:
+    if c in vowels:
+        print(c, "is a vowel")
+    else: 
+        print (c, "is not a vowel")
+```
+
+```{python}
+import pandas as pd
+
+langs = pd.Series(["Latin", "Greek", "Sanskrit"], name="language")
+langs 
+```
+
+```{python}
+import pandas as pd
+
+langs = pd.Series(["Latin", "Greek", "Sanskrit", "Finnish"], index=["a","b","c","d"], name="language")
+langs
+```
+
+```{python}
+import pandas as pd
+
+lang_df = pd.DataFrame(langs)
+lang_df
+```
+
+```{python}
+import pandas as pd
+
+fam = pd.Series(["Indo-European", "Indo-European", "Indo-European", "Uralic"], index=["a","b","c","d"], name="family")
+fam
+```
+
+```{python}
+import pandas as pd
+speakers = pd.Series([0, 0, 0, 6], index=["a","b","c","d"], name="speakers_millions")
+speakers
+```
+
+```{python}
+import pandas as pd
+
+langs = pd.Series(["Latin", "Greek", "Sanskrit", "Finnish"], index=["a","b","c","d"], name="language")
+fam = pd.Series(["Indo-European", "Indo-European", "Indo-European", "Uralic"], index=["a","b","c","d"], name="family")
+speakers = pd.Series([0, 0, 0, 6], index=["a","b","c","d"], name="speakers_millions")
+
+languages_df = pd.concat([langs, fam, speakers], axis=1)
+print(languages_df)
+```
+
+```{python}
+import pandas as pd
+
+location = pd.Series(["Italy", "Greece", "India", "Finland"], index=["a","b","c","d"], name="location")
+new_df = pd.concat([languages_df, location], axis=1)
+
+print(new_df)
+```
+
+```{python}
+import pandas as pd
+
+fresh_df = pd.DataFrame({
+    "language": ["Latin", "Greek", "Sanskrit", "Finnish"],
+    "family":   ["Indo-European", "Indo-European", "Indo-European", "Uralic"],
+    "speakers_millions": [0, 0, 0, 6],
+    "location": ["Italy", "Greece", "India", "Finland"]
+}, index=["a","b","c","d"])
+
+print(fresh_df)
+```
+
+```{python}
+import pandas as pd
+
+phonemes = pd.DataFrame({
+    "sound": ["/p/", "/b/", "/t/", "/d/", "/s/", "/h/"],
+    "voice":   ["voiceless", "voiced", "voiceless", "voiced", "voiceless", "voiceless"],
+    "place": ["bilabial", "bilabial", "alveolar", "alveolar", "alveolar", "glottal"],
+    "manner": ["stop", "stop", "stop", "stop", "fricative", "fricative"]
+}, index=["0","1","2","3", "4", "5"])
+
+print(phonemes)
+```
+
+```{python}
+import pandas as pd
+
+gettysburg = ["Four", "score", "and", "seven", "years", "ago"]
+getty = pd.Series(gettysburg)
+
+print(getty)
+```
+
+```{python}
+import pandas as pd
+
+languages = {
+    "French": ["Romance"],
+    "Spanish": ["Romance"],
+    "Italian": ["Romance"],
+    "English": ["Germanic"]
+}
+lang_df = pd.DataFrame(languages)
+print(lang_df)
+```
+
+```{python}
+import pandas as pd
+
+languages = {
+    "French": ["Romance", 1, "b"],
+    "Spanish": ["Romance", 1, "c"],
+    "Italian": ["Romance", 4, "a"],
+    "English": ["Germanic", 10, "x"]
+}
+lang_df = pd.DataFrame(languages)
+print(lang_df)
+```
+
+```{python}
+import pandas as pd
+
+languages = {
+    "French": "Romance",
+    "Spanish": "Romance",
+    "Italian": "Romance",
+    "English": "Germanic"
+}
+
+lang_df = pd.DataFrame.from_dict(languages, orient="index", columns=["Family"])
+print(lang_df)
+```
+
+```{python}
+import pandas as pd
+
+languages = {
+    "French": "Romance",
+    "Spanish": "Romance",
+    "Italian": "Romance",
+    "English": "Germanic"
+}
+
+lang_df = pd.DataFrame(list(languages.items()), columns=["Language", "Family"])
+print(lang_df)
+```
+
+```{python}
+import pandas as pd
+
+prim_loc = pd.Series(["France", "Spain", "Italy", "United Kingdom"], name="Primary location")
+num_speakers = pd.Series(["320 million", "500 million", "70 million", "1500 million"], name="# of speakers")
+writing_sys = pd.Series(["Latin alphabet", "Latin alphabet", "Latin alphabet", "Latin alphabet"], name="Writing system")
+iso = pd.Series(["fr", "es", "it", "en"], name="ISO code")
+
+lang_updated = pd.concat([lang_df, prim_loc, num_speakers, writing_sys, iso], axis=1)
+lang_updated
+```
+
+```{python}
+import pandas as pd
+
+pie_df = pd.DataFrame({
+    "Root": ["*bʰer-", "*genh₁-", "*ped-", "*doh₃-"],
+    "Meaning":   ["'to carry'", "'to beget'", "'foot'", "'to give'"],
+    "Latin": ["ferō", "gignō", "pēs", "dō"],
+    "Greek": ["pʰérō", "gígnomai", "poús", "dídōmi"],
+    "English": ["bear", "kin", "foot", "donate"]
+}, index=["0","1","2","3"])
+
+pie_df
+```
+
+```{python}
+import pandas as pd
+
+fresh_df = pd.DataFrame({
+    "language": ["Latin", "Greek", "Sanskrit", "Finnish"],
+    "family":   ["Indo-European", "Indo-European", "Indo-European", "Uralic"],
+    "speakers_millions": [0, 0, 0, 6],
+    "location": ["Italy", "Greece", "India", "Finland"]
+})
+
+print(fresh_df)
+
+print("------------")
+fresh_df.head(2) 
+print("------------")
+fresh_df.tail(2) 
+print("------------")
+fresh_df.shape
+print("------------")
+fresh_df.columns
+print("------------")
+fresh_df.index
+print("------------")
+fresh_df.info()
+```
+
+```{python}
+fresh_df["language"]           # Series
+print("------------")
+fresh_df[["language","family"]] # DataFrame
+print("------------")
+fresh_df.iloc[0]               # first row
+print("------------")
+fresh_df.iloc[1:3]             # slice rows 1..2
+```
+
+```{python}
+import pandas as df
+# Rows by label (after we set a custom index)
+df2 = fresh_df.copy()
+df2.index = ["a","b","c","d"]
+df2.loc["b"]             # row labeled 'b'
+```
+
+```{python}
+fresh_df.loc[0, "language"]        # cell by label/column
+print("------------")
+fresh_df.iloc[0, 0]                # cell by position
+print("------------")
+fresh_df.iloc[0:3, 0:2]            # rows 0..2, cols 0..1
+```
+
+```{python}
+df = fresh_df.copy()
+ie = df[df["family"] == "Indo-European"]
+ie
+print("------------")
+ie2 = (df["family"]=="Indo-European") & (df["location"]=="India")
+ie2
+```
+
+```{python}
+df[(df["family"]=="Indo-European") & (df["location"]=="India")]
+print("------------")
+df[(df["family"]=="Indo-European") | (df["location"]=="Finland")]
+```
+
+```{python}
+df[~(df["family"]=="Indo-European")]
+print("------------")
+df.sort_values(["location"])
+print("------------")
+df["speakers_millions"].sum()
+print("------------")
+int(df["speakers_millions"].sum())
+```
+
+```{python}
+import pandas as pd
+
+eng_vowels = pd.DataFrame({
+    "symbol": ["i", "ɪ", "e", "ɛ", "æ", "u", "ʊ", "o", "ɔ", "ɑ", "ʌ", "ə"],
+    "height": ["high", "high", "mid", "mid", "low", "high", "high", "mid", "mid", "low", "mid", "mid"], #choose from "high", "mid", and "low"
+    "backness": ["front", "front", "front", "front", "front", "back", "back", "back", "back", "back", "central", "central"], # choose from "front", "back", and "central"
+    "tense":   ["true", "false", "true", "false", "false", "true", "false", "true", "false", "false", "false", "false"], #choose from True or False
+    "rounded": ["false", "false", "false", "false", "false", "true", "true", "true", "true", "false", "false", "false"], #choose from True or False
+})
+
+eng_vowels
+```
+
+```{python}
+eng_vowels[(eng_vowels["height"]=="high") & (eng_vowels["backness"]=="back") & (eng_vowels["rounded"]=="true")]
+```
+
+```{python}
+eng_vowels[~(eng_vowels["tense"]=="true")]
+```
+
+```{python}
+eng_vowels[~(eng_vowels["tense"]=="true")].head(3)
+```
+
+```{python}
+eng_vowels.sort_values(["height", "backness"])
+```
+
+```{python}
+rounded = eng_vowels["rounded"].sum()
+rounded
+```
