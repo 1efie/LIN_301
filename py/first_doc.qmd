@@ -815,3 +815,369 @@ eng_vowels.sort_values(["height", "backness"])
 rounded = eng_vowels["rounded"].sum()
 rounded
 ```
+
+```{python}
+name = "Bob, Susie, Jimbo"
+prof = "teacher, doctor, lawyer"
+age = "45, 63, 119"
+
+name_split = name.split(", ")
+prof_split = prof.split(", ")
+age_split = age.split(", ")
+
+print(name_split, prof_split, age_split)
+```
+
+```{python}
+import pandas as pd
+
+recap_df = pd.DataFrame([prof_split, age_split], columns=name_split)
+recap_df
+```
+
+```{python}
+import pandas as pd
+
+line1 = "English German Spanish French"
+line2 = "dog Hund perro chien"
+line3 = "cat Katze gato chat"
+line4 = "house Haus casa maison"
+
+l1s = line1.split()
+l2s = line2.split()
+l3s = line3.split()
+l4s = line4.split()
+
+print(l1s, l2s, l3s, l4s)
+
+print("-----------------")
+
+line_df = pd.DataFrame([l2s, l3s, l4s], columns=l1s)
+line_df
+```
+
+```{python}
+import pandas as pd
+
+df = pd.DataFrame({
+    "language": ["Latin", "Greek", "Sanskrit", "Finnish"],
+    "family":   ["Indo-European", "Indo-European", "Indo-European", "Uralic"],
+    "speakers_millions": [0, 0, 0, 6],
+    "location": ["Italy", "Greece", "India", "Finland"]
+})
+
+df
+```
+
+```{python}
+df["is_extinct"] = [True, True, True, False]
+df
+```
+
+```{python}
+# Drop (returns a new DF unless inplace=True)
+df_no_family = df.drop(columns=["family"])
+df_no_family
+```
+
+```{python}
+# Drop (returns a new DF unless inplace=True) 
+df_no_latin = df.drop([0])
+df_no_latin
+```
+
+```{python}
+df = df.rename(columns={"speakers_millions": "speakers_M"})
+df
+```
+
+```{python}
+df_reset_no_latin = df_no_latin.reset_index()
+df_reset_no_latin
+```
+
+```{python}
+df_ind_drop = df.reset_index(drop=True)
+df_ind_drop
+```
+
+```{python}
+df_set = df.set_index("language")
+df_set
+```
+
+```{python}
+import pandas as pd 
+
+line_df
+
+print("-----------------")
+
+no_dog = line_df.drop([0])
+no_dog
+
+print("-----------------")
+
+reset_line_df = no_dog.reset_index(drop=True)
+reset_line_df
+```
+
+```{python}
+import pandas as pd
+
+df = pd.DataFrame({
+    "language": ["Latin", "Greek", "Sanskrit", "Finnish"],
+    "family":   ["Indo-European", "Indo-European", "Indo-European", "Uralic"],
+    "speakers_M": [0, 0, 0, 6],
+    "location": ["Italy", "Greece", "India", "Finland"]
+})
+
+df.sort_values(by="location", ascending=True)
+```
+
+```{python}
+df.sort_index() # by index
+```
+
+```{python}
+reflexes_verb = pd.Series(
+    {"Latin": 8, "Greek": 10, "Sanskrit": 12, "Old English": 6}
+)
+reflexes_noun = pd.Series(
+    {"Latin": 5, "Greek": 7, "Gothic": 4, "Old Church Slavonic": 3}
+)
+
+combined = pd.DataFrame({"verb": reflexes_verb, "noun": reflexes_noun})
+combined
+```
+
+```{python}
+combined_filled = combined.fillna(0)
+combined_filled
+```
+
+```{python}
+combined_dropped = combined.dropna()
+combined_dropped
+```
+
+```{python}
+total = reflexes_verb.add(reflexes_noun, fill_value=0)
+total.sort_values(ascending=False)
+```
+
+```{python}
+
+reflexes_verb = pd.Series(
+    {"Latin": 8, "Greek": 10, "Sanskrit": 12, "Old English": 6}
+)
+reflexes_noun = pd.Series(
+    {"Latin": 5, "Greek": 7, "Gothic": 4, "Old Church Slavonic": 3}
+)
+combined = pd.DataFrame({"verb": reflexes_verb, "noun": reflexes_noun})
+combined
+
+column_totals = combined.sum(axis=0)
+print(column_totals)
+```
+
+```{python}
+import pandas as pd
+
+sound_df = pd.DataFrame({
+    "s": [35, 28, 40],
+    "z": [20, 25, 18],
+    "t": [50, 40, 53],
+    "k": [42, 35, 48],
+    "m": [18, 12, 17],
+    "n": [22, 20, 19]
+})
+sound_df
+```
+
+```{python}
+import pandas as pd
+
+total = sound_df["s"].add(sound_df["z"])
+total
+
+#finish this activity for Friday
+```
+
+```{python}
+import pandas as pd
+
+stops = {
+    "Language": ["English", "Spanish", "Hindi"],
+    "Nasals": [3, 3, 4],
+    "Oral Stops": [6, 6, 5]
+}
+
+print(type(stops))
+```
+
+```{python}
+import pandas as pd
+
+stops_df = pd.DataFrame(stops)
+stops_df
+```
+
+```{python}
+import pandas as pd
+
+stops_df = pd.DataFrame(stops).set_index("Language")
+
+stops_df.sum()
+totals = df["Nasals"].add(df["Oral Stops"])
+totals
+```
+
+```{python}
+import pandas as pd
+
+# Create the data
+data = {
+    "Consonant": ["p", "b", "t", "d", "k", "g", "s", "z", "m", "n", "l", "r", "w", "j", "h"],
+    "Place": ["bilabial", "bilabial", "alveolar", "alveolar", "velar", "velar",
+              "alveolar", "alveolar", "bilabial", "alveolar", "alveolar", "alveolar",
+              "labial-velar", "palatal", "glottal"],
+    "Manner": ["stop", "stop", "stop", "stop", "stop", "stop",
+               "fricative", "fricative", "nasal", "nasal", "lateral", "trill",
+               "glide", "glide", "fricative"],
+    "Voicing": ["voiceless", "voiced", "voiceless", "voiced", "voiceless", "voiced",
+                "voiceless", "voiced", "voiced", "voiced", "voiced", "voiced",
+                "voiced", "voiced", "voiceless"]
+}
+
+# Create DataFrame
+df = pd.DataFrame(data)
+
+# Show DataFrame
+print(df)
+
+# Save to CSV
+df.to_csv("conlang_c.csv", index=False)
+```
+
+```{python}
+stops_df.to_csv("stops.csv", index=False)
+```
+
+```{python}
+import openpyxl
+import pandas as pd
+
+data = {
+    "Consonant": ["p", "b", "t", "d", "k", "g", "s", "z", "m", "n", "l", "r", "w", "j", "h"],
+    "Place": ["bilabial", "bilabial", "alveolar", "alveolar", "velar", "velar",
+              "alveolar", "alveolar", "bilabial", "alveolar", "alveolar", "alveolar",
+              "labial-velar", "palatal", "glottal"],
+    "Manner": ["stop", "stop", "stop", "stop", "stop", "stop",
+               "fricative", "fricative", "nasal", "nasal", "lateral", "trill",
+               "glide", "glide", "fricative"],
+    "Voicing": ["voiceless", "voiced", "voiceless", "voiced", "voiceless", "voiced",
+                "voiceless", "voiced", "voiced", "voiced", "voiced", "voiced",
+                "voiced", "voiced", "voiceless"]
+}
+
+# Create DataFrame
+df = pd.DataFrame(data)
+
+df.to_excel("conlang_c.xlsx", index=False)
+```
+
+```{python}
+stops_csv_df = pd.read_csv("conlang_c.csv")
+stops_csv_df.head()
+
+print("\n-------------------------------------\n")
+
+stops_excel_df = pd.read_excel("conlang_c.xlsx")
+stops_excel_df.head()
+```
+
+```{python}
+ref_df = pd.DataFrame({
+    "Language": ["Latin","Greek","Sanskrit","Gothic","OCS","Oscan"],
+    "Family":   ["Italic","Hellenic","Indic","Germanic","Slavic","Italic"],
+    "Reflexes": [8,10,12,4,3,5]
+})
+ref_df
+```
+
+```{python}
+int(ref_df["Reflexes"].sum())
+```
+
+```{python}
+ref_df.groupby("Family")["Reflexes"].sum()
+```
+
+```{python}
+ref_df.groupby("Family").agg(
+    total=("Reflexes","sum"),
+    mean=("Reflexes","mean"),
+    n=("Reflexes","count")
+)
+```
+
+```{python}
+import pandas as pd
+
+df = pd.DataFrame({
+    "Language": ["English","German","Dutch","Spanish","Italian","French","Greek","Hindi","Bengali"],
+    "Family":   ["Germanic","Germanic","Germanic","Romance","Romance","Romance","Hellenic","Indic","Indic"],
+    "Consonants": [24, 25, 20, 17, 23, 22, 25, 33, 29],
+    "Vowels": [20, 16, 13, 5, 7, 15, 7, 11, 7]
+})
+df
+```
+
+```{python}
+df.groupby("Family").agg(
+    total_c = ("Consonants","sum"),
+    total_v = ("Vowels","sum"),
+    mean_c = ("Consonants","mean"),
+    mean_v = ("Vowels","mean"),
+    n = ("Language", "count")
+)
+```
+
+```{python}
+import matplotlib.pyplot as plt
+
+counts = ref_df.groupby("Family")["Reflexes"].sum()
+ax = counts.plot(kind="bar", title="Reflex Counts by Family")
+ax.set_xlabel("Family")
+ax.set_ylabel("Total Reflexes")
+
+plt.tight_layout()   # optional, avoids label cutoff
+plt.show()           # displays the plot
+```
+
+```{python}
+import matplotlib.pyplot as plt
+
+con_c_df = pd.read_csv("conlang_c.csv")
+stops_df = con_c_df[(con_c_df["Manner"] == "stop")]
+
+stop_counts = stops_df["Place"].value_counts().sort_index()
+stop_counts
+```
+
+```{python}
+import matplotlib.pyplot as plt
+
+con_c_df = pd.read_csv("conlang_c.csv")
+stops_df = con_c_df[(con_c_df["Manner"] == "stop")]
+
+stop_counts = stops_df["Place"].value_counts().sort_index()
+
+ax = counts.plot(kind="bar", title="Consonant Counts by Place of Articulation")
+ax.set_xlabel("Place")
+ax.set_ylabel("Number of Consonant")
+
+plt.tight_layout()   # optional, avoids label cutoff
+plt.show()           # displays the plot
+```
