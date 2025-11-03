@@ -1336,3 +1336,250 @@ for word in words:
         
 syl_count
 ```
+
+```{python}
+list = ["eeny", "meeny", "miney", "mo"]
+list[0][0]
+```
+
+```{python}
+sentences = [
+    ["the", "cat", "sleeps"],
+    ["the", "dog", "runs"],
+    ["the", "bird", "flies"]
+]
+sentences[0][0]
+```
+
+```{python}
+consonants = {
+    "p": {"voice": False, "place": "bilabial", "manner": "stop"},
+    "t": {"voice": False, "place": "alveolar", "manner": "stop"},
+    "k": {"voice": False, "place": "velar", "manner": "stop"}
+}
+
+students = {
+    "Alice": {"quiz": 9, "homework": 10, "final": 8},
+    "Ben": {"quiz": 7, "homework": 9, "final": 10}
+}
+
+students["Alice"]["quiz"]
+```
+
+```{python}
+import pandas as pd
+consonants = {
+    "p": {"voice": False, "place": "bilabial", "manner": "stop"},
+    "t": {"voice": False, "place": "alveolar", "manner": "stop"},
+    "k": {"voice": False, "place": "velar", "manner": "stop"}
+}
+
+df = pd.DataFrame(consonants).T.reset_index(names="phoneme")
+df
+```
+
+```{python}
+import pandas as pd
+consonants = {
+    "p": {"voice": False, "place": "bilabial", "manner": "stop"},
+    "t": {"voice": False, "place": "alveolar", "manner": "stop"},
+    "k": {"voice": False, "place": "velar", "manner": "stop"}
+}
+df = pd.DataFrame(consonants)
+df
+```
+
+```{python}
+import pandas as pd
+
+words   = ["students", "run", "ran", "roots", "languages"]
+pos_tags = ["NOUN", "VERB", "VERB", "NOUN", "NOUN"]
+lemmas  = ["student", "run", "run", "root", "language"]
+freqs   = [5, 3, 2, 4, 6]
+
+rev_activity = {}
+for i, j, k, l in zip(words,pos_tags,lemmas,freqs):
+  rev_activity[i] = {
+    "pos_tags": j,
+    "lemmas": k,
+    "freqs": l
+}
+
+df_act = pd.DataFrame(rev_activity).T.reset_index(names="words")
+df_act
+```
+
+```{python}
+import spacy
+
+# Load the English model
+nlp = spacy.load("en_core_web_sm")
+
+# Test text
+text = "Hello world! SpaCy is working."
+
+# Process the text
+doc = nlp(text)
+
+# Print out each token (word) and its part of speech
+for token in doc:
+    print(token.text, token.pos_)
+
+```
+
+```{python}
+text = "Dr. Byrd's students can't wait to analyze PIE roots!"
+tokens_basic = text.split()
+tokens_basic
+```
+
+```{python}
+import re
+
+text = "Dr. Byrd's students can't wait to analyze PIE roots!"
+
+tokens_clean = re.split(r"[\s\W]+", text)
+tokens_clean
+```
+
+```{python}
+import spacy
+import pandas as pd
+
+# Load English model
+nlp = spacy.load("en_core_web_sm")
+
+text = "Dr. Byrd's students can't wait to analyze PIE roots!"
+doc = nlp(text)
+
+# Create list of dicts, one per token
+data = []
+for t in doc:
+    data.append({
+        "text": t.text,
+        "lemma": t.lemma_,
+        "POS": t.pos_,
+        "tag": t.tag_,
+        "stop": t.is_stop,
+        "is_punct": t.is_punct
+    })
+
+# Make DataFrame
+df = pd.DataFrame(data)
+print(df)
+```
+
+```{python}
+import spacy
+import pandas as pd
+
+# Load English model
+nlp = spacy.load("en_core_web_sm")
+
+jfk = "This year’s space budget is three times what it was in January 1961, and it is greater than the space budget of the previous eight years combined. That budget now stands at $5,400,000 a year — a staggering sum, though somewhat less than we pay for cigarettes and cigars every year. Space expenditures will soon rise some more, from 40 cents per person per week to more than 50 cents a week for every man, woman and child in the United States, for we have given this program a high national priority — even though I realize that this is in some measure an act of faith and vision, for we do not now know what benefits await us. But if I were to say, my fellow citizens, that we shall send to the moon, 240,000 miles away from the control station in Houston, a giant rocket more than 300 feet tall, the length of this football field, made of new metal alloys, some of which have not yet been invented, capable of standing heat and stresses several times more than have ever been experienced, fitted together with a precision better than the finest watch, carrying all the equipment needed for propulsion, guidance, control, communications, food and survival, on an untried mission, to an unknown celestial body, and then return it safely to Earth, re-entering the atmosphere at speeds of over 25,000 miles per hour, causing heat about half that of the temperature of the sun — almost as hot as it is here today — and do all this, and do it right, and do it first before this decade is out — then we must be bold. I’m the one who is doing all the work, so we just want you to stay cool for a minute. [laughter] However, I think we’re going to do it, and I think that we must pay what needs to be paid. I don’t think we ought to waste any money, but I think we ought to do the job. And this will be done in the decade of the sixties. It may be done while some of you are still here at school at this college and university. It will be done during the term of office of some of the people who sit here on this platform. But it will be done. And it will be done before the end of this decade. I am delighted that this university is playing a part in putting a man on the moon as part of a great national effort of the United States of America. Many years ago, the great British explorer George Mallory, who was to die on Mount Everest, was asked why did he want to climb it? He said, “Because it is there.” Well, space is there, and we’re going to climb it, and the moon and the planets are there, and new hopes for knowledge and peace are there. And, therefore, as we set sail we ask God’s blessing on the most hazardous and dangerous and greatest adventure on which man has ever embarked. Thank you."
+
+doc = nlp(jfk)
+
+# Create list of dicts, one per token
+data = []
+for t in doc:
+    data.append({
+        "text": t.text,
+        "lemma": t.lemma_,
+        "POS": t.pos_,
+        "tag": t.tag_,
+        "stop": t.is_stop,
+        "is_punct": t.is_punct
+    })
+
+# Make DataFrame
+df = pd.DataFrame(data)
+print(df)
+
+```
+
+```{python}
+import spacy
+nlp = spacy.load("en_core_web_sm")
+
+doc = nlp("The children ran quickly to their houses.")
+
+for token in doc:
+    print(token.text, "→", token.lemma_, token.pos_)
+```
+
+```{python}
+text = "Students were running, reading, and writing all day."
+doc = nlp(text)
+
+tokens = [t.text for t in doc]
+lemmas = [t.lemma_ for t in doc]
+
+list(zip(tokens, lemmas))
+```
+
+```{python}
+nouns = [t.lemma_ for t in doc if t.pos_ == "NOUN"]
+verbs = [t.lemma_ for t in doc if t.pos_ == "VERB"]
+
+print("Nouns:", nouns)
+print("Verbs:", verbs)
+```
+
+```{python}
+import pandas as pd
+from collections import Counter
+
+text = "Students were running, reading, and writing all day, student."
+sentence = nlp(text)
+
+lemmas = [t.lemma_.lower() for t in sentence if t.is_alpha]
+freq = Counter(lemmas)
+
+sentence_df = pd.DataFrame(freq.items(), columns=["lemma", "count"]).sort_values("count", ascending=False)
+sentence_df
+```
+
+```{python}
+import matplotlib.pyplot as plt
+
+top = sentence_df.head(10)
+plt.bar(top["lemma"], top["count"])
+plt.title("Top 10 Lemmas in the Text")
+plt.xlabel("Lemma")
+plt.ylabel("Count")
+plt.show()
+```
+
+```{python}
+import spacy
+
+content_lemmas = [t.lemma_.lower() for t in doc
+                  if not (t.is_stop or t.is_punct or t.is_space or t.like_num)]
+                  
+content_lemmas
+```
+
+```{python}
+from collections import Counter
+import pandas as pd
+
+freq = Counter(content_lemmas)
+df_freq = (pd.DataFrame(freq.items(), columns=["lemma", "count"])
+           .sort_values("count", ascending=False))
+df_freq.head(10)
+```
+
+```{python}
+import matplotlib.pyplot as plt
+
+top10 = df_freq.head(10)
+plt.figure()
+plt.bar(top10["lemma"], top10["count"])
+plt.title("Top 10 Content Lemmas")
+plt.xlabel("Lemma")
+plt.ylabel("Count")
+plt.xticks(rotation=45)
+plt.tight_layout()
+plt.show()
+```
