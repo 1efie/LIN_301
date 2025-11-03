@@ -1,0 +1,122 @@
+---
+title: "hayes_lexie_component2"
+format: html
+---
+
+```{python}
+with open("/Users/lefie/301/course_project/personal_lies_utf8.txt", "r", encoding="utf-8") as f:
+    pl = f.read()
+with open("/Users/lefie/301/course_project/half_life_utf8.txt", "r", encoding="utf-8") as f:
+    hl = f.read()
+with open("/Users/lefie/301/course_project/delete_ya_utf8.txt", "r", encoding="utf-8") as f:
+    dy = f.read()
+with open("/Users/lefie/301/course_project/purgatory_silerstar_utf8.txt", "r", encoding="utf-8") as f:
+    ps = f.read()
+```
+
+```{python}
+import re
+
+pl_cleaned = [w.lower() for w in re.findall(r"[a-zA-Z]+(?:'[a-zA-Z]+)?", pl) if w]
+hl_cleaned = [w.lower() for w in re.findall(r"[a-zA-Z]+(?:'[a-zA-Z]+)?", hl) if w]
+dy_cleaned = [w.lower() for w in re.findall(r"[a-zA-Z]+(?:'[a-zA-Z]+)?", dy) if w]
+ps_cleaned = [w.lower() for w in re.findall(r"[a-zA-Z]+(?:'[a-zA-Z]+)?", ps) if w]
+```
+
+```{python}
+import pandas as pd
+
+words_series = pd.Series(pl_cleaned + hl_cleaned + dy_cleaned + ps_cleaned)
+
+song_series = pd.Series(
+    ['Personal Lies'] * len(pl_cleaned) +
+    ['Half Life'] * len(hl_cleaned) +
+    ['Delete Ya'] * len(dy_cleaned) +
+    ['Purgatory Silverstar'] * len(ps_cleaned),
+)
+
+word_length_series = pd.Series(
+    [len(w) for w in words_series],
+)
+
+word_lengths = []
+for w in words_series:
+    length = len(w)
+    if "'" in w:
+        length -= 1
+    word_lengths.append(length)
+    
+word_counts = words_series.value_counts()
+freq_series = words_series.map(word_counts)
+
+num_vowels_series = pd.Series([sum(v in 'aeiou' for v in w) for w in words_series])
+
+pronouns = {
+    'i', "i'm", "i've", "i'll", "i'd",
+    'you', "you're", "you've", "you'll", "you'd",
+    'he', "he's", "he'll", "he'd",
+    'she', "she's", "she'll", "she'd",
+    'we', "we're", "we've", "we'll", "we'd",
+    'they', "they're", "they've", "they'll", "they'd",
+    'me', 'him', 'her', 'us', 'them', 'my', 'mine', 'your', 'yours', 'our', 'ours', 'their', 'theirs',
+    'myself', 'yourself', 'himself', 'herself', 'itself', 'ourselves', 'yourselves', 'themselves',
+    'anyone', 'anybody', 'anything',
+    'someone', 'somebody', 'something',
+    'noone', 'nobody', 'nothing',
+    'everyone', 'everybody', 'everything',
+    'one', 'oneself'
+}
+
+pronoun_series = pd.Series([w in pronouns for w in words_series])
+```
+
+```{python}
+import pandas as pd
+
+df = pd.DataFrame({
+    'Word': words_series,
+    'Song': song_series,
+    'Word Length': word_length_series,
+    'Number of Vowels': num_vowels_series,
+    'Frequency': freq_series,
+    'Pronoun': pronoun_series
+})
+
+df.head(10)
+
+df.to_csv('hayes_lexie_component2.csv', encoding='utf-8')
+```
+
+The data for this project are the lyrics to four songs (one from each album) by the musical artist Djo: "Personal Lies," "Half Life," "Delete Ya," and "Purgatory Silverstar." The lyrics were taken from Genius: <https://genius.com/artists/Djo>, and I manually converted the text to .txt files since they aren't provided on the website.
+
+I processed each file to extract only words, keeping apostrophes in contractions like "I'm" intact. All words were converted to lowercase, and empty strings or punctuation were removed.
+
+The cleaned words were combined into a single DataFrame and exported as a CSV. The DataFrame contains the following columns:
+
+-   **Word**: the cleaned word
+
+-   **Song**: which song the word came from
+
+-   **Word Length**: the number of letters in the word (ignoring apostrophes)
+
+-   **Number of Vowels**: number of vowels in the word
+
+-   **Pronoun**: True/False if the word is a pronoun (this includes subject, object, possessive, reflexive, and contracted forms like "I'm" and "you're")
+
+-   **Frequency**: how many times the word appears across all songs
+
+```{python}
+
+df.shape
+```
+
+```{python}
+
+pronoun_check = df[df['Pronoun'] == True]
+pronoun_counts = pronoun_check.groupby(['Song', 'Word']).size().reset_index(name='Count')
+pronoun_counts_sorted = pronoun_counts.sort_values(['Song', 'Count'], ascending=[True, False])
+
+print(pronoun_counts_sorted)
+```
+
+The output CSV has 1,207 rows and 6 columns, and interestingly, pronouns and certain repeated words appear frequently, which could reflect patterns in perspective and voice across Djo’s songs. For example, looking at the pronoun counts, Djo uses "I", "you", "me", and "my" a lot. He also uses variations of "she" pretty often, so he’s not just talking about himself or the listener—he’s bringing a specific person into the songs too.

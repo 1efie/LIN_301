@@ -1,0 +1,188 @@
+---
+title: "hw5_Hayes_Lexie"
+format: html
+---
+
+**Step 0:**
+
+```{python}
+import pandas as pd
+
+url = "https://github.com/phoible/dev/blob/master/data/phoible.csv?raw=true"
+df = pd.read_csv(url, low_memory=False)
+df.head()
+```
+
+```{python}
+
+import pandas as pd
+import numpy as np
+import re
+
+# 1) Identify "feature-like" columns (only punctuation +, -, 0, commas, spaces after stripping)
+def is_feature_like(series, sample_n=300):
+    s = series.dropna().astype(str).str.strip()
+    if len(s) == 0:
+        return False
+    if len(s) > sample_n:
+        s = s.sample(sample_n, random_state=0)
+    # allow only + - 0 , and whitespace
+    return s.str.match(r'^[\s,\+\-0]+$').all()
+
+feature_cols = [c for c in df.columns if df[c].dtype == "object" and is_feature_like(df[c])]
+
+# 2) Normalize strings -> booleans: True if ANY '+' present; else False
+def plus_any_to_bool(x):
+    if pd.isna(x):
+        return False
+    if isinstance(x, (bool, np.bool_)):
+        return bool(x)
+    s = str(x).strip()
+    if s == "" or s == "0":
+        return False
+    # split on commas/spaces; True if any token has '+'
+    return any('+' in tok for tok in re.split(r'[,\s]+', s) if tok != "")
+
+df[feature_cols] = df[feature_cols].applymap(plus_any_to_bool).astype("boolean")
+
+# Confirm that it works: feature columns should now be True/False (nullable boolean)
+df[["tone","nasal","continuant","delayedRelease"]].dtypes
+df[["tone","nasal","continuant","delayedRelease"]].head(3)
+```
+
+**Step 1:**
+
+```{python}
+print("Dataset (rows, columns):", df.shape)
+print("-----")
+print("Column names:", df.columns.tolist())
+print("-----")
+print("Index info:", df.index)
+```
+
+**Step 2:**
+
+```{python}
+num_languages = df['LanguageName'].nunique()
+print("Number of distinct languages:", num_languages)
+```
+
+```{python}
+largest_inventory = df.groupby('LanguageName')['Phoneme'].nunique().sort_values(ascending=False)
+print("Language with the largest inventory:")
+print(largest_inventory.head(1))  
+```
+
+```{python}
+vowels_df = df[df['SegmentClass'] == 'vowel']
+
+vowels_df.head()
+```
+
+```{python}
+languages_with_tone = df.groupby('LanguageName')['tone'].any()
+num_languages_with_tone = languages_with_tone.sum()
+print("Number of unique languages with tones:", num_languages_with_tone)
+```
+
+```{python}
+# Traditional natural classes using PHOIBLE boolean features
+nat_classes = {
+    "stop": (df["continuant"] == False) & (df["delayedRelease"] == False),
+    "affricate": (df["continuant"] == False) & (df["delayedRelease"] == True),
+    "fricative": (df["continuant"] == True) & (df["delayedRelease"] == True),
+    "nasal": (df["consonantal"] == True) & (df["continuant"] == False) & (df["nasal"] == True),
+    "liquid": (df["approximant"] == True) & (df["consonantal"] == True),
+    "glide": (df["approximant"] == True) & (df["syllabic"] == False),
+    "tap": df["tap"] == True,
+    "vowel": (df["approximant"] == True) & (df["syllabic"] == True),
+}
+
+counts = []
+for name, condition in nat_classes.items():
+    counts.append((name, df[condition].shape[0]))
+
+most_common_manner = max(counts, key=lambda x: x[1])[0]
+
+print("Most common manner of articulation:", most_common_manner)
+```
+
+**Step 3:**
+
+```{python}
+df_new = df.copy()
+
+df_new["IsVowel"] = df_new["SegmentClass"].str.lower() == "vowel"
+
+diacritics = ["ː", "ʰ", "ʷ", "ʼ"]
+df_new["HasDiacritic"] = df_new["Phoneme"].apply(lambda x: any(d in str(x) for d in diacritics))
+
+df_new.head()
+```
+
+**Step 4:**
+
+```{python}
+
+nat_classes = {
+    "stop": (df_lang["continuant"] == False) & (df_lang["delayedRelease"] == False),
+    "affricate": (df_lang["continuant"] == False) & (df_lang["delayedRelease"] == True),
+    "fricative": (df_lang["continuant"] == True) & (df_lang["delayedRelease"] == True),
+    "nasal": (df_lang["consonantal"] == True) & (df_lang["continuant"] == False) & (df_lang["nasal"] == True),
+    "liquid": (df_lang["approximant"] == True) & (df_lang["consonantal"] == True),
+    "glide": (df_lang["approximant"] == True) & (df_lang["syllabic"] == False),
+    "tap": df_lang["tap"] == True,
+    "vowel": (df_lang["approximant"] == True) & (df_lang["syllabic"] == True),
+}
+
+places = {
+    "bilabial": (df_lang["labial"] == True) & (df_lang["labiodental"] == False),
+    "labiodental": (df_lang["labiodental"] == True),
+    "dental": (df_lang["coronal"] == True) & (df_lang["anterior"] == True) & (df_lang["distributed"] == False),
+    "alveolar": (df_lang["coronal"] == True) & (df_lang["anterior"] == True) & (df_lang["distributed"] == True),
+    "postalveolar": (df_lang["coronal"] == True) & (df_lang["anterior"] == False) & (df_lang["distributed"] == True),
+    "retroflex": (df_lang["coronal"] == True) & (df_lang["anterior"] == False) & (df_lang["distributed"] == False),
+    "palatal": (df_lang["dorsal"] == True) & (df_lang["high"] == True) & (df_lang["front"] == True),
+    "velar": (df_lang["dorsal"] == True) & (df_lang["back"] == True) & (df_lang["high"] == False),
+    "uvular": (df_lang["dorsal"] == True) & (df_lang["back"] == True) & (df_lang["low"] == True),
+    "pharyngeal": (df_lang["retractedTongueRoot"] == True),
+    "glottal": ((df_lang["spreadGlottis"] == True) | (df_lang["constrictedGlottis"] == True)) &
+               (df_lang["SegmentClass"].str.lower() != "vowel")
+}
+
+language_name = "English"
+
+df_lang = df_new[df_new["LanguageName"] == language_name]
+
+total_segments = df_lang.shape[0]
+
+num_vowels = df_lang[df_lang["SegmentClass"].str.lower() == "vowel"].shape[0]
+num_consonants = df_lang[df_lang["SegmentClass"].str.lower() == "consonant"].shape[0]
+
+class_counts = []
+for name, condition in nat_classes.items():
+    class_counts.append((name, df_lang[condition].shape[0]))
+most_common_class = max(class_counts, key=lambda x: x[1])[0]
+
+place_counts = []
+for name, condition in places.items():
+    place_counts.append((name, df_lang[condition].shape[0]))
+most_common_place = max(place_counts, key=lambda x: x[1])[0]
+
+df_lang.to_csv("phoible_output.csv", index=False)
+
+print("Language:", language_name)
+print("Total segments:", total_segments)
+print("Vowels:", num_vowels)
+print("Consonants:", num_consonants)
+print("Most frequent manner of articulation:", most_common_class)
+print("Most frequent place of articulation:", most_common_place)
+```
+
+**Step 5:**
+
+Looking at English, I noticed that there are more consonants (75) than vowels (49), which wasn't surprising. The most common place is bilabial, likely because of all the /p/, /b/, and /m/ sounds.
+
+What was unexpected was that the most common manner of articulation came out as vowels. While vowels aren’t a manner of articulation in the traditional sense, they were counted as a natural class, so the code was doing what it was supposed to.
+
+PHOIBLE seems really useful for my project since it makes it easy to spot patterns and make comparisons in any dataset.
