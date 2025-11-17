@@ -1,0 +1,190 @@
+---
+title: "hw6_hayes_lexie"
+format: html
+---
+
+```{python}
+import spacy
+from nltk.corpus import wordnet as wn
+import pandas as pd
+import matplotlib.pyplot as plt
+import nltk
+
+nltk.download('wordnet')
+
+# Load spaCy model
+nlp = spacy.load("en_core_web_sm")
+```
+
+Step 1:
+
+```{python}
+with open("/Users/lefie/301/hw6_files/anne.txt", "r", encoding="utf-8") as f:
+  text = f.read()
+
+doc = nlp(text)
+
+pos = {"NOUN", "VERB", "ADJ", "ADV"}
+lemmas = []
+
+for token in doc:
+  if token.pos_ in pos and token.is_alpha:
+    lemmas.append((token.lemma_.lower(), token.pos_))
+    
+df = pd.DataFrame(lemmas, columns=["lemma", "POS"])
+lemmas = df.value_counts().reset_index(name="frequency")
+    
+top10 = lemmas.head(10)
+
+plt.figure(figsize=(10,6))
+plt.bar(top10["lemma"], top10["frequency"])
+plt.title("10 Most Frequent Lemmas in Anne of Green Gables")
+plt.xlabel("Lemma")
+plt.ylabel("Frequency")
+plt.show()
+```
+
+Step 2:
+
+```{python}
+top5 = ["say", "go", "have", "so", "think"]
+
+for lemma in top5:
+    print(f"\n ★ Lemma: '{lemma}'")
+    synsets = wn.synsets(lemma)
+    counter = 1  
+    for syn in synsets:
+        print(f"\nSynset {counter}: {syn.name()}")
+        print(f"Definition: {syn.definition()}")
+        examples = syn.examples()
+        if examples:
+            print("Examples:")
+            for ex in examples:
+                print(f"  - {ex}")
+        hypernyms = [h.name() for h in syn.hypernyms()]
+        if hypernyms:
+            print("Hypernyms:", ", ".join(hypernyms))
+        hyponyms = [h.name() for h in syn.hyponyms()]
+        if hyponyms:
+            print("Hyponyms:", ", ".join(hyponyms))
+        counter += 1
+```
+
+Step 3:
+
+```{python}
+pairs = [
+    ("say", "go"),
+    ("have", "so"),
+    ("think", "do"),
+    ("know", "just"),
+    ("come", "get")
+]
+
+for w1, w2 in pairs:
+    syn1_list = wn.synsets(w1)
+    syn2_list = wn.synsets(w2)
+    
+    if syn1_list and syn2_list:  
+        syn1 = syn1_list[0]  
+        syn2 = syn2_list[0]  
+        similarity = syn1.wup_similarity(syn2)
+        if similarity is not None:
+            print(f"'{w1}' and '{w2}' similarity score: {similarity:.2f}")
+        else:
+            print(f"'{w1}' and '{w2}' similarity score: none")
+    else:
+        print(f"No synsets found for '{w1}' or '{w2}'") 
+```
+
+Looking at the similarity scores, the pair 'think' and 'do' comes out as the most similar with a score of 0.33. This makes sense because both involve mental or physical processes, so it’s reasonable that WordNet would see a connection. On the other hand, the pair 'have' and 'so' has the second lowest similarity scores, while 'know' and 'just' has none at all, which also feels right, since these words serve very different roles in English and don't really feel comparable to me. Overall, the scores match what I would expect intuitively, though some of the relationships seem like they could have even been a bit higher.
+
+Step 4:
+
+This category of verbs describes acts of communicating, speaking, or conveying information.
+
+```{python}
+communication_words = ["say", "tell", "ask", "shout", "whisper", "announce", "report", "explain", "argue", "complain"]
+
+verb_synsets = {}
+
+for word in communication_verbs:
+    synsets = wn.synsets(word, pos='v')  
+    verb_synsets[word] = synsets
+    print(f"{word}: {len(synsets)} synsets")
+```
+
+```{python}
+def verb_senses(word):
+    return wn.synsets(word, pos='v')
+
+def all_verb_hyponyms(root):
+    seen, stack = set(), [root]
+    while stack:
+        cur = stack.pop()
+        if cur in seen:
+            continue
+        seen.add(cur)
+        stack.extend(cur.hyponyms())
+    return {s for s in seen if s.pos() == 'v'}
+
+def lemmas_from_synsets(synsets, keep_multiword=False):
+    out = set()
+    for s in synsets:
+        for lem in s.lemmas():
+            name = lem.name().lower()
+            if not keep_multiword and "_" in name:
+                continue
+            out.add(name.replace("_", " "))
+    return out
+
+seed_verbs = ["say", "tell", "ask", "shout", "whisper", "announce", "report", "explain", "argue", "complain"]
+
+base_synsets = []
+for w in seed_verbs:
+    ss = verb_senses(w)
+    if ss:
+        ss_scored = sorted(ss, key=lambda s: len(s.hyponyms()), reverse=True)
+        base_synsets.append(ss_scored[0])
+
+expanded = set()
+for s in base_synsets:
+    expanded |= all_verb_hyponyms(s)
+
+comm_verb_lemmas = sorted(lemmas_from_synsets(expanded, keep_multiword=False) | set(seed_verbs))
+
+print(comm_verb_lemmas)
+```
+
+-   How many new items did WordNet add beyond your seeds?
+
+    -   WordNet was able to add around 460 new verbs related to communication beyond my original seeds.
+
+-   Which obvious ones are missing, if any?
+
+    -   Some modern or casual terms like “chat,” “text,” “DM,” or “notify” are missing, likely because WordNet’s database emphasizes more literary senses rather than modern slang.
+
+-   Are there any weird additions to the list?
+
+    -   There are some pretty funny words I've never even seen before, like "vituperate", "clapperclaw", "ululate", "wisecrack", "anathematise", "halloo", "kibbitz", "pettifog", etc. I'm also surprised to see "bitch" in the list, for obvious reasons!
+
+```{python}
+words = comm_verb_lemmas
+
+similarities = []
+for i in range(len(words)):
+    for j in range(i+1, len(words)):
+        w1 = words[i]
+        w2 = words[j]
+        syn1_list = wn.synsets(w1, pos='v')
+        syn2_list = wn.synsets(w2, pos='v')
+        if syn1_list and syn2_list:
+            syn1 = syn1_list[0]
+            syn2 = syn2_list[0]
+            sim = syn1.wup_similarity(syn2)
+            if sim is not None:
+                similarities.append(sim)
+
+average_similarity = sum(similarities) / len(similarities)
+print(f"Average Wu-Palmer similarity: {average_similarity:.4f}")
+```
