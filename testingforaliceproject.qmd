@@ -1,0 +1,13 @@
+---
+title: "testingforaliceproject"
+format: html
+---
+
+```{python}
+import spacy
+import pandas as pd
+from collections import Counter
+from nltk.corpus import wordnet as wn
+import matplotlib.pyplot as plt
+import nltkee
+```
