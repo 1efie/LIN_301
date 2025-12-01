@@ -72,15 +72,33 @@ word_stats
 ### 4. Visualizing
 
 ```{python}
+colors = ['#E3969F', '#A0C3D9', '#699091']
+
 pronoun_counts_by_person = pronouns_df.groupby(['Song', 'Person']).size().reset_index(name='Count')
 
 pronoun_counts_wide = pronoun_counts_by_person.pivot(index='Song', columns='Person', values='Count').fillna(0)
 
-ax = pronoun_counts_wide.plot(kind='bar', stacked=True)
+ax = pronoun_counts_wide.plot(kind='bar', color=colors, stacked=True)
 plt.xlabel('Song')
 plt.ylabel('Number of Pronouns')
 plt.title('Pronoun Use by Person Across Djo Songs')
 plt.xticks(rotation=0)  
 plt.tight_layout()      
+plt.show()
+```
+
+```{python}
+plt.close('all')
+
+word_length_avg = df.groupby('Song')['Word Length'].mean()
+
+fig, ax = plt.subplots()
+ax.bar(word_length_avg.index, word_length_avg.values, color='#A0B1D8')
+ax.set_xlabel('Song')
+ax.set_ylabel('Average Word Length')
+ax.set_title('Average Word Length Across Djo Songs')
+plt.xticks(rotation=0)
+plt.tight_layout()
+
 plt.show()
 ```
