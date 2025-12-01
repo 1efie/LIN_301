@@ -1,0 +1,86 @@
+---
+title: "hayes_lexie_component3"
+format: html
+---
+
+### 1. Setup
+
+```{python}
+# master package code block
+
+import pandas as pd
+import matplotlib.pyplot as plt
+```
+
+```{python}
+df = pd.read_csv("hayes_lexie_component2.csv", encoding="utf-8", index_col=0)
+
+df.head()
+
+print(df.shape)
+print(df.columns)
+```
+
+### 2. Planning Analysis
+
+For this analysis, I’m looking at pronoun use and word structure across Djo’s four songs, "Delete Ya", "Half Life", "Personal Lies", and "Purgatory Silverstar", each from different albums. I plan to sort pronouns into first, second, and third person to see how perspective shifts and which voices stand out. I’ll also look at word length, number of vowels, and vowel-to-letter ratios to get a sense of lyrical style and rhythm. I expect first-person pronouns like “I” and “me” to dominate, with some “you” and “she” showing up, and I think songs with more narrative content will use longer, vowel-heavy words, whereas punchier songs will stick to shorter words.
+
+### 3. Analyzing the Data
+
+#### Pronoun Analysis:
+
+```{python}
+first_person = {'i', "i'm", "i've", "i'll", "i'd", 'me', 'my', 'mine', 'myself', 'we', "we're", "we've", "we'll", "we'd", 'us', 'our', 'ours', 'ourselves'}
+second_person = {'you', "you're", "you've", "you'll", "you'd", 'your', 'yours', 'yourself', 'yourselves'}
+third_person = {'he', "he's", "he'll", "he'd", 'him', 'himself', 'she', "she's", "she'll", "she'd", 'her', 'hers', 'herself', 'they', "they're", "they've", "they'll", "they'd", 'them', 'theirs', 'themselves', 'it', 'its', 'itself', 'one', 'oneself'}
+
+def pronoun_person(word):
+    word = word.lower()
+    if word in first_person:
+        return 'First'
+    elif word in second_person:
+        return 'Second'
+    elif word in third_person:
+        return 'Third'
+    else:
+        return None
+      
+df['Person'] = df['Word'].apply(pronoun_person)
+
+pronouns_df = df[df['Person'].notna()]
+
+pronoun_counts = pronouns_df.groupby(['Song', 'Person', 'Word']).size().reset_index(name='Count')
+
+pronoun_counts_sorted = pronoun_counts.sort_values(['Song', 'Count'], ascending=[True, False])
+
+pronoun_counts_sorted
+```
+
+#### Word Structure Analysis:
+
+```{python}
+df['Vowel Ratio'] = df['Number of Vowels'] / df['Word Length']
+
+word_stats = df.groupby('Song').agg({
+    'Word Length': 'mean',
+    'Vowel Ratio': 'mean'
+}).reset_index()
+
+word_stats
+```
+
+### 4. Visualizing
+
+```{python}
+pronoun_counts_by_person = pronouns_df.groupby(['Song', 'Person']).size().reset_index(name='Count')
+
+pronoun_counts_wide = pronoun_counts_by_person.pivot(index='Song', columns='Person', values='Count').fillna(0)
+
+ax = pronoun_counts_wide.plot(kind='bar', stacked=True)
+plt.xlabel('Song')
+plt.ylabel('Number of Pronouns')
+plt.title('Pronoun Use by Person Across Djo Songs')
+plt.xticks(rotation=0)  
+plt.tight_layout()      
+plt.show()
+```
