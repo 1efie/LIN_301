@@ -6,15 +6,17 @@ format: html
 ### 1. Setup
 
 ```{python}
-# master package code block
+# packages used
 
 import pandas as pd
 import matplotlib.pyplot as plt
+from wordcloud import WordCloud
 ```
 
 ```{python}
 df = pd.read_csv("hayes_lexie_component2.csv", encoding="utf-8", index_col=0)
 
+# confirming it read properly:
 df.head()
 
 print(df.shape)
@@ -69,6 +71,21 @@ word_stats = df.groupby('Song').agg({
 word_stats
 ```
 
+```{python}
+print('Summary stats:', '\n')
+df.describe()
+
+print('\n', '---------------------------------------------------------------', '\n')
+
+print('10 most common words across all 4 songs:', '\n')
+df['Word'].value_counts().head(10)
+
+print('\n', '---------------------------------------------------------------', '\n')
+
+print('Most common pronouns in each song:', '\n')
+df[df['Pronoun']].groupby('Song')['Word'].value_counts()
+```
+
 ### 4. Visualizing
 
 ```{python}
@@ -101,4 +118,48 @@ plt.xticks(rotation=0)
 plt.tight_layout()
 
 plt.show()
+```
+
+```{python}
+plt.close('all')
+
+vowel_ratio = df.groupby('Song')['Number of Vowels'].sum() / df.groupby('Song')['Word Length'].sum()
+
+fig, ax = plt.subplots()
+ax.bar(vowel_ratio.index, vowel_ratio.values, color='#F6C7B3')
+ax.set_xlabel('Song')
+ax.set_ylabel('Vowel-to-Consonant Ratio')
+ax.set_title('Vowel-to-Consonant Ratio Across Djo Songs')
+plt.xticks(rotation=0)
+plt.tight_layout()
+
+plt.show()
+```
+
+```{python}
+word_freq = df['Word'].value_counts().to_dict()
+
+wc = WordCloud(width=800, height=400, background_color='white', colormap='tab20').generate_from_frequencies(word_freq)
+
+plt.figure(figsize=(15, 7.5))
+plt.imshow(wc, interpolation='bilinear')
+plt.axis('off')
+plt.title('Most Frequent Words in Djo Lyrics', fontsize=20, pad=20, color='#699091')
+plt.show()
+```
+
+### 5. Interpretations
+
+My analysis looked at patterns in word choice and sound structure across four Djo songs, focusing on common words, average word length, and vowel-to-consonant ratio. I used functions like df.describe(), value_counts(), and groupby() to generate summary statistics and identify the most frequently used words overall and within each song. The results showed that short, pronoun-based words such as “I,” “you,” and “my” appeared most often, with an average word length of about 3.7 letters and a vowel ratio of roughly 0.43. This suggests a conversational and personal tone in the lyrics, supported by simple and repetitive language. My analysis could be extended by comparing vowel ratios between individual songs, tracking changes in word use by section (i.e. verse, chorus, bridge), or even analyzing the emotional tone of each. For the final project, I also need to refine the pronoun analysis to account for lyrical variants like 'ya' in 'Delete Ya,' which aren’t currently recognized as second-person pronouns.
+
+### 6. Final Steps
+
+```{python}
+df = pd.read_csv("hayes_lexie_component2.csv", encoding="utf-8")
+
+df['Overall Frequency'] = df['Word'].map(df['Word'].value_counts())
+
+df['Song Frequency'] = df.groupby(['Song', 'Word'])['Word'].transform('count')
+
+df.to_csv("hayes_lexie_component3.csv", index=False, encoding="utf-8")
 ```
