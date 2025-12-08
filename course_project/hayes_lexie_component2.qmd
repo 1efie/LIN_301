@@ -53,7 +53,7 @@ num_vowels_series = pd.Series([sum(v in 'aeiou' for v in w) for w in words_serie
 
 pronouns = {
     'i', "i'm", "i've", "i'll", "i'd",
-    'you', "you're", "you've", "you'll", "you'd",
+    'you', 'ya', "you're", "you've", "you'll", "you'd",
     'he', "he's", "he'll", "he'd",
     'she', "she's", "she'll", "she'd",
     'we', "we're", "we've", "we'll", "we'd",
